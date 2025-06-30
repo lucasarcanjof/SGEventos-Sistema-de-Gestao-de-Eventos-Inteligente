@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGEventos - Recomendação Inteligente</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>SGEventos - Recomendação de Eventos com IA</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="interesses">
+            <h2>Informe seus interesses</h2>
+            <form id="interesses-form">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" value="tecnologia"> Tecnologia</label>
+                    <label><input type="checkbox" value="marketing"> Marketing</label>
+                    <label><input type="checkbox" value="inovacao"> Inovação</label>
+                    <label><input type="checkbox" value="psicologia"> Psicologia</label>
+                    <label><input type="checkbox" value="negocios"> Negócios</label>
+                </div>
+                <button type="submit" class="btn">Ver Recomendações</button>
+            </form>
+        </section>
+
+        <section class="recomendacoes">
+            <h2>Eventos Recomendados para Você</h2>
+            <div id="resultado-recomendacoes" class="eventos-grid">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>SGEventos - Desenvolvido por Lucas Arcanjo Ferreira Silva</p>
+        </div>
+    </footer>
+
+    <script>
+        const eventos = {
+            tecnologia: {
+                titulo: "TechConf Brasil 2025",
+                data: "20/09/2025",
+                local: "Centro de Convenções SP",
+                descricao: "Maior conferência de tecnologia e inovação do país."
+            },
+            marketing: {
+                titulo: "Marketing Digital Avançado",
+                data: "10/10/2025",
+                local: "Auditório Blue Sky",
+                descricao: "Táticas e estratégias para alavancar campanhas digitais."
+            },
+            inovacao: {
+                titulo: "Festival de Startups",
+                data: "01/11/2025",
+                local: "Parque de Exposições MG",
+                descricao: "Startups inovadoras apresentam soluções criativas."
+            },
+            psicologia: {
+                titulo: "Jornada Psico Minas",
+                data: "05/08/2025",
+                local: "Universidade Central",
+                descricao: "Reflexões e práticas em saúde mental."
+            },
+            negocios: {
+                titulo: "Fórum de Empreendedores",
+                data: "25/10/2025",
+                local: "SEBRAE Arena",
+                descricao: "Cases e dicas com grandes nomes do empreendedorismo."
+            }
+        };
+
+        document.getElementById('interesses-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const selecionados = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value);
+            const resultado = document.getElementById('resultado-recomendacoes');
+            resultado.innerHTML = '';
+
+            if (selecionados.length === 0) {
+                resultado.innerHTML = "<p>Por favor, selecione pelo menos um interesse.</p>";
+                return;
+            }
+
+            selecionados.forEach(interesse => {
+                const ev = eventos[interesse];
+                if (ev) {
+                    resultado.innerHTML += `
+                        <div class="card-evento">
+                            <h3>${ev.titulo}</h3>
+                            <p><strong>Data:</strong> ${ev.data}</p>
+                            <p><strong>Local:</strong> ${ev.local}</p>
+                            <p>${ev.descricao}</p>
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

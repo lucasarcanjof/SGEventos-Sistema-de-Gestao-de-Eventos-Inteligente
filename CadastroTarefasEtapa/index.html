@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SGEventos - Tarefas por Etapa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>SGEventos - Cadastro de Tarefas por Etapa</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="form-section">
+      <h2>Cadastrar Tarefa</h2>
+      <form id="tarefa-form">
+        <div class="form-group">
+          <label for="descricao">Descrição da Tarefa</label>
+          <input type="text" id="descricao" required>
+        </div>
+
+        <div class="form-group">
+          <label for="etapa">Etapa do Evento</label>
+          <select id="etapa" required>
+            <option value="">Selecione a etapa</option>
+            <option value="Planejamento">Planejamento</option>
+            <option value="Preparação">Preparação</option>
+            <option value="Realização">Realização</option>
+            <option value="Prestação de Contas">Prestação de Contas</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn">Adicionar Tarefa</button>
+      </form>
+    </section>
+
+    <section class="lista-tarefas">
+      <h2>Tarefas por Etapa</h2>
+      <div id="tarefas-container">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>SGEventos - Desenvolvido por Lucas Arcanjo Ferreira Silva</p>
+    </div>
+  </footer>
+
+  <script>
+    const tarefas = {
+      Planejamento: [],
+      Preparação: [],
+      Realização: [],
+      "Prestação de Contas": []
+    };
+
+    const form = document.getElementById('tarefa-form');
+    const container = document.getElementById('tarefas-container');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const descricao = document.getElementById('descricao').value;
+      const etapa = document.getElementById('etapa').value;
+      tarefas[etapa].push(descricao);
+      form.reset();
+      renderizarTarefas();
+    });
+
+    function renderizarTarefas() {
+      container.innerHTML = '';
+      for (const etapa in tarefas) {
+        const grupo = tarefas[etapa];
+        if (grupo.length === 0) continue;
+
+        let html = `<div class="etapa-bloco"><h3>${etapa}</h3><ul>`;
+        grupo.forEach((tarefa, i) => {
+          html += `
+            <li>
+              ${tarefa}
+              <button onclick="editarTarefa('${etapa}', ${i})">Editar</button>
+              <button onclick="removerTarefa('${etapa}', ${i})">Excluir</button>
+              <button onclick="mover('${etapa}', ${i}, -1)">⬆</button>
+              <button onclick="mover('${etapa}', ${i}, 1)">⬇</button>
+            </li>
+          `;
+        });
+        html += `</ul></div>`;
+        container.innerHTML += html;
+      }
+    }
+
+    function editarTarefa(etapa, index) {
+      const novaDesc = prompt("Editar tarefa:", tarefas[etapa][index]);
+      if (novaDesc) {
+        tarefas[etapa][index] = novaDesc;
+        renderizarTarefas();
+      }
+    }
+
+    function removerTarefa(etapa, index) {
+      tarefas[etapa].splice(index, 1);
+      renderizarTarefas();
+    }
+
+    function mover(etapa, index, direcao) {
+      const novaPos = index + direcao;
+      if (novaPos >= 0 && novaPos < tarefas[etapa].length) {
+        [tarefas[etapa][index], tarefas[etapa][novaPos]] = [tarefas[etapa][novaPos], tarefas[etapa][index]];
+        renderizarTarefas();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SGEventos - Venda e Validação de Ingressos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>SGEventos - Controle de Ingressos</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="form-section">
+      <h2>Cadastrar Lote de Ingressos</h2>
+      <form id="lote-form">
+        <div class="form-group">
+          <label for="nome-lote">Nome do Lote</label>
+          <input type="text" id="nome-lote" required>
+        </div>
+
+        <div class="form-group">
+          <label for="quantidade-lote">Quantidade</label>
+          <input type="number" id="quantidade-lote" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="preco-lote">Valor por ingresso (R$)</label>
+          <input type="number" id="preco-lote" min="0" step="0.01" required>
+        </div>
+
+        <button type="submit" class="btn">Cadastrar Lote</button>
+      </form>
+    </section>
+
+    <section class="lista-lotes">
+      <h2>Lotes Disponíveis</h2>
+      <div id="lotes-container"></div>
+    </section>
+
+    <section class="validar-ingresso">
+      <h2>Validação de Ingresso</h2>
+      <form id="validar-form">
+        <input type="text" id="codigo-ingresso" placeholder="Digite o código do ingresso" required>
+        <button type="submit" class="btn">Validar</button>
+      </form>
+      <p id="validacao-resultado"></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>SGEventos - Desenvolvido por Lucas Arcanjo Ferreira Silva</p>
+    </div>
+  </footer>
+
+  <script>
+    const lotes = [];
+    const ingressosVendidos = new Set();
+    const ingressosValidados = new Set();
+
+    function gerarCodigoUnico(lote, index) {
+      const base = lote.nome + index + Date.now();
+      return btoa(base).slice(0, 12);
+    }
+
+    function renderizarLotes() {
+      const container = document.getElementById('lotes-container');
+      container.innerHTML = '';
+
+      if (lotes.length === 0) {
+        container.innerHTML = "<p>Nenhum lote cadastrado ainda.</p>";
+        return;
+      }
+
+      lotes.forEach((lote, i) => {
+        container.innerHTML += `
+          <div class="lote-card">
+            <h3>${lote.nome}</h3>
+            <p><strong>Quantidade:</strong> ${lote.quantidade}</p>
+            <p><strong>Valor:</strong> R$ ${lote.preco.toFixed(2)}</p>
+            <button onclick="venderIngresso(${i})">Vender Ingresso</button>
+          </div>
+        `;
+      });
+    }
+
+    function venderIngresso(index) {
+      const lote = lotes[index];
+      if (lote.vendidos >= lote.quantidade) {
+        alert("Lote esgotado!");
+        return;
+      }
+
+      const codigo = gerarCodigoUnico(lote, lote.vendidos);
+      lote.vendidos++;
+      ingressosVendidos.add(codigo);
+      alert("Ingresso vendido com código: " + codigo);
+    }
+
+    document.getElementById('lote-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nome = document.getElementById('nome-lote').value;
+      const quantidade = parseInt(document.getElementById('quantidade-lote').value);
+      const preco = parseFloat(document.getElementById('preco-lote').value);
+      lotes.push({ nome, quantidade, preco, vendidos: 0 });
+      e.target.reset();
+      renderizarLotes();
+    });
+
+    document.getElementById('validar-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const codigo = document.getElementById('codigo-ingresso').value.trim();
+      const resultado = document.getElementById('validacao-resultado');
+
+      if (!ingressosVendidos.has(codigo)) {
+        resultado.textContent = "❌ Ingresso inválido!";
+        resultado.style.color = "red";
+      } else if (ingressosValidados.has(codigo)) {
+        resultado.textContent = "⚠️ Ingresso já validado!";
+        resultado.style.color = "orange";
+      } else {
+        ingressosValidados.add(codigo);
+        resultado.textContent = "✅ Ingresso válido!";
+        resultado.style.color = "green";
+      }
+
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

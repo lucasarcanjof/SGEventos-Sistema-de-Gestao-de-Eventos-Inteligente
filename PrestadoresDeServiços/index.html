@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SGEventos - Prestadores de Serviço</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>SGEventos - Associação de Prestadores</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="form-section">
+      <h2>Cadastrar Prestador e Associar à Etapa</h2>
+      <form id="associacao-form">
+        <div class="form-group">
+          <label for="nome">Nome do Prestador</label>
+          <input type="text" id="nome" required>
+        </div>
+
+        <div class="form-group">
+          <label for="servico">Serviço</label>
+          <input type="text" id="servico" required>
+        </div>
+
+        <div class="form-group">
+          <label for="etapa">Etapa do Evento</label>
+          <select id="etapa" required>
+            <option value="">Selecione a etapa</option>
+            <option value="Planejamento">Planejamento</option>
+            <option value="Preparação">Preparação</option>
+            <option value="Realização">Realização</option>
+            <option value="Prestação de Contas">Prestação de Contas</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn">Associar</button>
+      </form>
+    </section>
+
+    <section class="lista-associacoes">
+      <h2>Associações Realizadas</h2>
+      <div id="tabela-associacoes">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>SGEventos - Desenvolvido por Lucas Arcanjo Ferreira Silva</p>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('associacao-form');
+    const tabela = document.getElementById('tabela-associacoes');
+    let associacoes = [];
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const servico = document.getElementById('servico').value;
+      const etapa = document.getElementById('etapa').value;
+
+      associacoes.push({ nome, servico, etapa });
+      renderizarTabela();
+
+      form.reset();
+    });
+
+    function renderizarTabela() {
+      tabela.innerHTML = "";
+
+      if (associacoes.length === 0) {
+        tabela.innerHTML = "<p>Nenhuma associação realizada ainda.</p>";
+        return;
+      }
+
+      associacoes.forEach((a, index) => {
+        tabela.innerHTML += `
+          <div class="card">
+            <p><strong>Prestador:</strong> ${a.nome}</p>
+            <p><strong>Serviço:</strong> ${a.servico}</p>
+            <p><strong>Etapa:</strong> ${a.etapa}</p>
+            <button onclick="remover(${index})" class="btn-remover">Remover</button>
+          </div>
+        `;
+      });
+    }
+
+    function remover(index) {
+      associacoes.splice(index, 1);
+      renderizarTabela();
+    }
+  </script>
+</body>
+</html>
